@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import BlogCards from '../components/BlogCards.astro';
+import FinalCta from '../components/FinalCta.astro';
+import { type Lang } from '../lib/site';
+import { t } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+---
+
+<Base lang={lang} title={d.meta.blogTitle} description={d.meta.blogDescription} path="/blog/" current="blog">
+  <PageHero title={d.blog.title} lead={d.blog.lead}>
+    {d.blog.onlyRu && <p class="mt-4 text-sm font-semibold text-sky">{d.blog.onlyRu}</p>}
+  </PageHero>
+  <section class="px-4 pb-12 md:px-6">
+    <div class="mx-auto max-w-6xl" data-reveal>
+      <BlogCards lang={lang} />
+    </div>
+  </section>
+  <FinalCta lang={lang} />
+</Base>

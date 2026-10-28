@@ -1,0 +1,62 @@
+---
+import { Translate } from '@phosphor-icons/react';
+import { site, localePath, type Lang } from '../lib/site';
+import { t } from '../i18n';
+import Logo from './Logo.astro';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+const links = [
+  { href: '/', label: d.nav.home },
+  { href: '/about/', label: d.nav.about },
+  { href: '/services/', label: d.nav.services },
+  { href: '/blog/', label: d.nav.blog },
+  { href: '/contacts/', label: d.nav.contacts },
+];
+const c = site.contacts;
+---
+
+<footer class="mt-24 bg-forest pb-32 pt-16">
+  <div class="mx-auto grid max-w-6xl gap-12 px-4 md:grid-cols-[1.4fr_1fr_1fr] md:px-6">
+    <div class="flex flex-col gap-4">
+      <Logo role={d.common.role} light />
+      <p class="max-w-sm text-sm text-white/65">{d.footer.tagline}</p>
+      <p class="flex items-center gap-2 text-sm font-semibold text-[#9fd1bb]">
+        <Translate size={18} weight="duotone" />
+        {d.common.langNote}
+      </p>
+    </div>
+    <nav aria-label={d.footer.navTitle}>
+      <h2 class="mb-4 text-sm font-semibold text-white">{d.footer.navTitle}</h2>
+      <ul class="flex flex-col gap-2">
+        {
+          links.map((l) => (
+            <li>
+              <a href={localePath(lang, l.href)} class="text-sm text-white/65 transition-colors duration-300 hover:text-white">
+                {l.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <div>
+      <h2 class="mb-4 text-sm font-semibold text-white">{d.footer.contactsTitle}</h2>
+      <ul class="flex flex-col gap-2 text-sm text-white/65">
+        <li><a href={c.telegram} target="_blank" rel="noopener" class="hover:text-white">Telegram {c.telegramHandle}</a></li>
+        <li><a href={c.whatsapp} target="_blank" rel="noopener" class="hover:text-white">WhatsApp</a></li>
+        <li>
+          {c.max ? <a href={c.max} target="_blank" rel="noopener" class="hover:text-white">MAX</a> : <span title={d.common.maxSoon}>MAX · {d.common.soon}</span>}
+        </li>
+        <li><a href={c.phoneHref} class="hover:text-white">{c.phone}</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="mx-auto mt-12 flex max-w-6xl flex-col gap-2 px-4 text-xs text-white/60 md:flex-row md:items-center md:justify-between md:px-6">
+    <p>{d.footer.rights} · {d.footer.disclaimer}</p>
+    <a href={localePath(lang, '/privacy/')} class="underline underline-offset-4 hover:text-white">{d.footer.privacy}</a>
+  </div>
+</footer>

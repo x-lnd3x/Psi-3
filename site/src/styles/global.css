@@ -1,0 +1,172 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/manrope';
+
+@theme {
+  --font-sans: 'Manrope Variable', system-ui, sans-serif;
+
+  --color-canvas: #eef6f3;
+  --color-surface: #ffffff;
+  --color-ink: #12302a;
+  --color-ink-soft: #35504a;
+  --color-muted: #58706a;
+  --color-line: #d3e5de;
+  --color-sage: #23805f;
+  --color-sage-deep: #17614a;
+  --color-sage-tint: #dcf1e8;
+  --color-sky: #2b78ad;
+  --color-sky-tint: #def0fa;
+  --color-mist: #e7f3ee;
+  --color-forest: #143d33;
+  --color-forest-soft: #1c4f42;
+
+  --ease-calm: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    background: var(--color-canvas);
+    font-family: var(--font-sans);
+    font-feature-settings: 'ss01';
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3, h4 { text-wrap: balance; }
+  p, li, dd, figcaption { text-wrap: pretty; }
+  ::selection { background: var(--color-sage-tint); color: var(--color-sage-deep); }
+  :focus-visible {
+    outline: 2px solid var(--color-sky);
+    outline-offset: 3px;
+    border-radius: 8px;
+  }
+}
+
+@view-transition { navigation: auto; }
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 500ms;
+  animation-timing-function: var(--ease-calm);
+}
+
+/* Заголовок первого экрана: градиент только на тексте */
+.text-hero {
+  background: linear-gradient(90deg, #12302a 0%, #5e7a70 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Фон первого экрана: мягкие цветные пятна, круги-«волны» и точечная сетка */
+.backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  /* фон растворяется книзу, без резкой границы со следующей секцией */
+  mask-image: linear-gradient(to bottom, #000 65%, transparent);
+}
+.backdrop-dots {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(color-mix(in srgb, var(--color-sage) 22%, transparent) 1px, transparent 1.5px);
+  background-size: 24px 24px;
+  mask-image: radial-gradient(ellipse 80% 70% at 70% 40%, #000 30%, transparent 75%);
+}
+.backdrop-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(64px);
+  opacity: 0.85;
+  animation: blob-drift 22s var(--ease-calm) infinite alternate;
+}
+.backdrop-rings { position: absolute; color: var(--color-sage); opacity: 0.18; }
+.backdrop-rings circle { animation: ring-pulse 6s var(--ease-calm) infinite; transform-origin: center; transform-box: fill-box; }
+.backdrop-rings circle:nth-child(2) { animation-delay: 1.5s; }
+.backdrop-rings circle:nth-child(3) { animation-delay: 3s; }
+.backdrop-rings circle:nth-child(4) { animation-delay: 4.5s; }
+@keyframes blob-drift {
+  from { transform: translate(0, 0) scale(1); }
+  to { transform: translate(48px, 32px) scale(1.12); }
+}
+@keyframes ring-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.04); }
+}
+
+/* Появление секций при прокрутке */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 700ms var(--ease-calm), transform 700ms var(--ease-calm);
+}
+[data-reveal].is-visible { opacity: 1; transform: none; }
+
+/* Слова в большом слогане */
+.tagline-word {
+  color: color-mix(in srgb, var(--color-ink) 28%, transparent);
+  transition: color 600ms var(--ease-calm);
+}
+.tagline-word.is-on { color: var(--color-ink); }
+.tagline-word.is-accent.is-on { color: var(--color-sage); }
+
+/* Бегущая строка запросов */
+.marquee-track { animation: marquee 48s linear infinite; }
+.marquee:hover .marquee-track { animation-play-state: paused; }
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* Карточка с мягким пятном света под курсором */
+.glow-card { position: relative; overflow: hidden; isolation: isolate; }
+.glow-card::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: 240px;
+  height: 240px;
+  left: calc(var(--gx, 50%) - 120px);
+  top: calc(var(--gy, 50%) - 120px);
+  border-radius: 9999px;
+  background: var(--color-sky-tint);
+  filter: blur(48px);
+  opacity: 0;
+  transition: opacity 300ms var(--ease-calm);
+}
+.glow-card:hover::before { opacity: 1; }
+
+/* Аккордеон FAQ */
+.faq-item summary { list-style: none; cursor: pointer; }
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item .faq-icon { transition: transform 500ms var(--ease-calm); }
+.faq-item[open] .faq-icon { transform: rotate(45deg); }
+.faq-item[open] .faq-body { animation: faq-in 500ms var(--ease-calm); }
+@keyframes faq-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Статьи блога */
+.prose-article h2 { font-size: 1.5rem; line-height: 2rem; font-weight: 700; margin: 2.5rem 0 1rem; color: var(--color-ink); }
+.prose-article h3 { font-size: 1.25rem; line-height: 1.75rem; font-weight: 600; margin: 2rem 0 0.75rem; }
+.prose-article p { margin: 0 0 1rem; color: var(--color-ink-soft); font-size: 1.125rem; line-height: 1.75rem; }
+.prose-article ul, .prose-article ol { margin: 0 0 1.5rem; padding-left: 1.5rem; color: var(--color-ink-soft); font-size: 1.125rem; line-height: 1.75rem; }
+.prose-article ul { list-style: disc; }
+.prose-article ol { list-style: decimal; }
+.prose-article li { margin-bottom: 0.5rem; }
+.prose-article strong { color: var(--color-ink); font-weight: 600; }
+.prose-article blockquote { margin: 1.5rem 0; padding: 1rem 1.5rem; border: 1px solid var(--color-line); border-radius: 1rem; background: var(--color-sage-tint); }
+.prose-article blockquote p { margin: 0; color: var(--color-sage-deep); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  [data-reveal] { transform: none; transition: opacity 400ms linear; }
+  .marquee-track { animation: none; }
+  .backdrop-blob, .backdrop-rings circle { animation: none; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+}

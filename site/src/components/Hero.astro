@@ -1,0 +1,70 @@
+---
+import { TelegramLogo, SealCheck, ArrowRight } from '@phosphor-icons/react';
+import FamilySystem from './FamilySystem';
+import Backdrop from './Backdrop.astro';
+import { site, type Lang } from '../lib/site';
+import { t } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+---
+
+<section class="relative isolate overflow-hidden px-4 pb-16 pt-32 md:px-6 md:pb-24 md:pt-40" aria-labelledby="hero-title">
+  <Backdrop />
+  <div class="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1.1fr_1fr]">
+    <div class="flex flex-col items-start">
+      <p class="hero-in mb-6 flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-sm font-semibold text-sage-deep" style="--d:0ms">
+        <span class="relative flex size-2">
+          <span class="absolute inline-flex size-full animate-ping rounded-full bg-sage opacity-60 motion-reduce:animate-none"></span>
+          <span class="relative inline-flex size-2 rounded-full bg-sage"></span>
+        </span>
+        {d.hero.eyebrow}
+      </p>
+      <h1 id="hero-title" class="hero-in text-hero max-w-[680px] text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl xl:text-7xl" style="--d:80ms">
+        {d.hero.title[0]}<br />{d.hero.title[1]}
+      </h1>
+      <p class="hero-in mt-6 max-w-[680px] text-lg text-ink-soft md:text-xl" style="--d:160ms">{d.hero.subtitle}</p>
+      <ul class="hero-in mt-8 flex flex-wrap gap-2" style="--d:240ms">
+        {d.hero.chips.map((c) => <li class="rounded-full bg-sage-tint px-3 py-1 text-sm font-semibold text-sage-deep">{c}</li>)}
+      </ul>
+      <div class="hero-in mt-10 flex flex-col items-start gap-4 sm:flex-row sm:items-center" style="--d:320ms">
+        <button
+          type="button"
+          data-book
+          class="group flex items-center gap-2 rounded-xl bg-sage px-4 py-3 text-base font-semibold text-white shadow-[0_8px_24px_rgba(35,128,95,0.28)] transition duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:bg-sage-deep active:scale-[0.98]"
+        >
+          {d.hero.cta}
+          <ArrowRight size={18} weight="bold" className="transition-transform duration-300 group-hover:translate-x-1" />
+        </button>
+        <a href={site.contacts.telegram} target="_blank" rel="noopener" class="flex items-center gap-2 text-base font-semibold text-sky hover:text-ink">
+          <TelegramLogo size={20} weight="duotone" />
+          {d.hero.secondary}
+        </a>
+      </div>
+      <p class="hero-in mt-10 flex items-center gap-2 text-sm text-muted" style="--d:400ms">
+        <SealCheck size={20} weight="duotone" className="shrink-0 text-sage" />
+        {d.hero.proof}
+      </p>
+    </div>
+    <div class="hero-in" style="--d:200ms">
+      <FamilySystem client:visible labels={d.hero.systemNodes} hint={d.hero.systemHint} />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-in {
+    animation: hero-in 800ms var(--ease-calm) both;
+    animation-delay: var(--d);
+  }
+  @keyframes hero-in {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-in { animation: none; }
+  }
+</style>

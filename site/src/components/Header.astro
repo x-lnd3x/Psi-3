@@ -1,0 +1,79 @@
+---
+import { localePath, type Lang } from '../lib/site';
+import { t } from '../i18n';
+import Logo from './Logo.astro';
+
+interface Props {
+  lang: Lang;
+  path: string;
+  current: string | null;
+}
+const { lang, path, current } = Astro.props;
+const d = t(lang);
+const links = [
+  { id: 'home', href: '/', label: d.nav.home },
+  { id: 'about', href: '/about/', label: d.nav.about },
+  { id: 'services', href: '/services/', label: d.nav.services },
+  { id: 'blog', href: '/blog/', label: d.nav.blog },
+  { id: 'contacts', href: '/contacts/', label: d.nav.contacts },
+];
+---
+
+<header class="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-3 md:pt-4">
+  <div
+    class="pointer-events-auto flex w-full max-w-6xl items-center justify-between gap-3 rounded-2xl border border-line/70 bg-surface/70 py-2 pl-3 pr-2 shadow-[0_8px_32px_rgba(18,48,42,0.06)] backdrop-blur-xl md:w-auto md:gap-6"
+  >
+    <a href={localePath(lang, '/')} class="rounded-xl" aria-label={d.meta.siteName}>
+      <Logo role={d.common.role} />
+    </a>
+
+    <nav aria-label={d.nav.quickLinks} class="hidden lg:block">
+      <ul class="flex items-center gap-1">
+        {
+          links.map((l) => (
+            <li>
+              <a
+                href={localePath(lang, l.href)}
+                aria-current={current === l.id ? 'page' : undefined}
+                class:list={[
+                  'block rounded-xl px-3 py-2 text-sm font-semibold transition-colors duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]',
+                  current === l.id ? 'bg-sage-tint text-sage-deep' : 'text-ink-soft hover:bg-mist hover:text-ink',
+                ]}
+              >
+                {l.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <div class="flex rounded-xl bg-mist p-0.5 text-xs font-semibold" role="group" aria-label={d.nav.lang}>
+        {
+          (['ru', 'tt'] as Lang[]).map((l) => (
+            <a
+              href={localePath(l, path)}
+              hreflang={l}
+              lang={l}
+              aria-current={l === lang ? 'true' : undefined}
+              class:list={[
+                'rounded-[10px] px-2 py-1.5 uppercase transition-colors duration-300',
+                l === lang ? 'bg-surface text-ink shadow-sm' : 'text-muted hover:text-ink',
+              ]}
+            >
+              {l === 'ru' ? 'Рус' : 'Тат'}
+            </a>
+          ))
+        }
+      </div>
+      <a
+        href={localePath(lang, '/contacts/')}
+        data-book
+        class="hidden rounded-xl bg-sage px-3 py-2 text-sm font-semibold text-white transition duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-sage-deep active:scale-[0.98] sm:block"
+      >
+        {d.nav.book}
+      </a>
+    </div>
+  </div>
+</header>

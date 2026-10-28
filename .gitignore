@@ -1,0 +1,18 @@
+# Исходные фото диплома: на них видны номера документов.
+# На сайте используются копии с размытыми номерами из site/public/diploma/
+Diplom/
+
+# Секреты сервера: токен бота и адрес вебхука хранятся только на Beget
+site/public/api/config.php
+.env
+.env.*
+
+# Зависимости и сборка
+node_modules/
+site/dist/
+site/.astro/
+
+# Системные файлы
+.DS_Store
+Thumbs.db
+desktop.ini

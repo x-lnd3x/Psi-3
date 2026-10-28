@@ -1,0 +1,35 @@
+---
+import { ArrowRight } from '@phosphor-icons/react';
+import ContactButtons from './ContactButtons.astro';
+import { type Lang } from '../lib/site';
+import { t } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+---
+
+<section class="px-4 py-20 md:px-6 md:py-24" aria-labelledby="final-title">
+  <div class="mx-auto grid max-w-6xl gap-12 relative isolate overflow-hidden rounded-3xl bg-forest p-8 md:p-12 lg:grid-cols-[1.2fr_1fr] lg:items-center" data-reveal>
+    <svg class="pointer-events-none absolute -right-40 -top-40 -z-10 size-[560px] text-white/10" viewBox="0 0 560 560" fill="none" aria-hidden="true">
+      <circle cx="280" cy="280" r="120" stroke="currentColor" stroke-width="1.5" />
+      <circle cx="280" cy="280" r="190" stroke="currentColor" stroke-width="1.5" />
+      <circle cx="280" cy="280" r="260" stroke="currentColor" stroke-width="1" />
+    </svg>
+    <div class="flex flex-col items-start gap-6">
+      <h2 id="final-title" class="max-w-xl text-3xl font-bold tracking-tight text-white md:text-5xl">{d.finalCta.title}</h2>
+      <p class="max-w-xl text-lg text-white/75">{d.finalCta.text}</p>
+      <button
+        type="button"
+        data-book
+        class="group flex items-center gap-2 rounded-xl bg-white px-4 py-3 text-base font-semibold text-sage-deep transition duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:bg-sage-tint active:scale-[0.98]"
+      >
+        {d.hero.cta}
+        <ArrowRight size={18} weight="bold" className="transition-transform duration-300 group-hover:translate-x-1" />
+      </button>
+    </div>
+    <ContactButtons lang={lang} />
+  </div>
+</section>

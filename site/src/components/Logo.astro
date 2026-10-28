@@ -1,0 +1,20 @@
+---
+interface Props {
+  role: string;
+  light?: boolean;
+}
+const { role, light = false } = Astro.props;
+---
+
+<span class="flex items-center gap-2">
+  <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true" class="shrink-0">
+    <rect width="32" height="32" rx="10" fill="#23805f"></rect>
+    <circle cx="12" cy="13" r="4" fill="#dcf1e8"></circle>
+    <circle cx="20.5" cy="13" r="4" fill="#def0fa"></circle>
+    <circle cx="16.25" cy="21" r="3" fill="#ffffff"></circle>
+  </svg>
+  <span class="flex flex-col leading-none">
+    <span class:list={["text-sm font-bold", light ? "text-white" : "text-ink"]}>Екатерина Халикова</span>
+    <span class:list={["mt-0.5 text-xs font-medium", light ? "text-white/60" : "text-muted"]}>{role}</span>
+  </span>
+</span>

@@ -1,0 +1,25 @@
+---
+// Декоративный фон первого экрана: зелёное и голубое пятна,
+// расходящиеся круги (как «волны» от одного человека по всей семье) и точечная сетка.
+interface Props {
+  rings?: boolean;
+}
+const { rings = true } = Astro.props;
+---
+
+<div class="backdrop" aria-hidden="true">
+  <span class="backdrop-blob left-[-10%] top-[-20%] size-[520px] bg-[#bfe6d5]"></span>
+  <span class="backdrop-blob right-[-12%] top-[10%] size-[560px] bg-[#c4e2f5]" style="animation-delay:-8s"></span>
+  <span class="backdrop-blob bottom-[-30%] left-[30%] size-[420px] bg-[#d6efe4]" style="animation-delay:-14s"></span>
+  <div class="backdrop-dots"></div>
+  {
+    rings && (
+      <svg class="backdrop-rings right-[-160px] top-1/2 hidden size-[900px] -translate-y-1/2 lg:block" viewBox="0 0 900 900" fill="none">
+        <circle cx="450" cy="450" r="250" stroke="currentColor" stroke-width="1.5" />
+        <circle cx="450" cy="450" r="320" stroke="currentColor" stroke-width="1.5" />
+        <circle cx="450" cy="450" r="390" stroke="currentColor" stroke-width="1" />
+        <circle cx="450" cy="450" r="445" stroke="currentColor" stroke-width="1" />
+      </svg>
+    )
+  }
+</div>

@@ -1,0 +1,14 @@
+---
+interface Props {
+  title: string;
+  subtitle?: string;
+  center?: boolean;
+  id?: string;
+}
+const { title, subtitle, center = false, id } = Astro.props;
+---
+
+<div class:list={['mb-12 flex flex-col gap-4', center && 'items-center text-center']}>
+  <h2 id={id} class="max-w-2xl text-3xl font-bold tracking-tight text-ink md:text-5xl">{title}</h2>
+  {subtitle && <p class="max-w-2xl text-lg text-muted">{subtitle}</p>}
+</div>

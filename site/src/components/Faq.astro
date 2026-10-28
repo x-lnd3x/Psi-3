@@ -1,0 +1,35 @@
+---
+import { Plus } from '@phosphor-icons/react';
+import SectionHead from './SectionHead.astro';
+import { type Lang } from '../lib/site';
+import { t } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  limit?: number;
+}
+const { lang, limit } = Astro.props;
+const f = t(lang).faq;
+const items = limit ? f.items.slice(0, limit) : f.items;
+---
+
+<section id="faq" class="scroll-mt-24 px-4 py-20 md:px-6 md:py-24" aria-labelledby="faq-title">
+  <div class="mx-auto max-w-3xl" data-reveal>
+    <SectionHead id="faq-title" title={f.title} />
+    <div class="flex flex-col gap-3">
+      {
+        items.map((it, i) => (
+          <details class="faq-item group rounded-2xl border border-line bg-surface transition-colors duration-300 open:border-sage/40" open={i === 0}>
+            <summary class="flex items-center justify-between gap-4 p-6 text-lg font-semibold text-ink">
+              {it.q}
+              <span class="faq-icon grid size-8 shrink-0 place-items-center rounded-full bg-mist text-sage">
+                <Plus size={16} weight="bold" />
+              </span>
+            </summary>
+            <div class="faq-body px-6 pb-6 text-base text-ink-soft">{it.a}</div>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>

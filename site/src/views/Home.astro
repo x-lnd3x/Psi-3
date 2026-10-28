@@ -1,0 +1,56 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Marquee from '../components/Marquee.astro';
+import TaglineReveal from '../components/TaglineReveal.astro';
+import Problems from '../components/Problems.astro';
+import Approach from '../components/Approach.astro';
+import Steps from '../components/Steps.astro';
+import WillWont from '../components/WillWont.astro';
+import Partner from '../components/Partner.astro';
+import PriceCards from '../components/PriceCards.astro';
+import Education from '../components/Education.astro';
+import Principles from '../components/Principles.astro';
+import Faq from '../components/Faq.astro';
+import BlogCards from '../components/BlogCards.astro';
+import SectionHead from '../components/SectionHead.astro';
+import FinalCta from '../components/FinalCta.astro';
+import { localePath, type Lang } from '../lib/site';
+import { t } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: d.faq.items.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+};
+---
+
+<Base lang={lang} title={d.meta.homeTitle} description={d.meta.homeDescription} path="/" current="home" jsonLd={[faqLd]}>
+  <Hero lang={lang} />
+  <Marquee items={d.marquee} />
+  <Problems lang={lang} />
+  <TaglineReveal text={d.tagline.text} accent={d.tagline.accent} />
+  <Approach lang={lang} />
+  <Steps lang={lang} />
+  <WillWont lang={lang} />
+  <Partner lang={lang} />
+  <PriceCards lang={lang} />
+  <Education lang={lang} />
+  <Principles lang={lang} />
+  <Faq lang={lang} />
+  <section class="px-4 py-20 md:px-6 md:py-24" aria-labelledby="posts-title">
+    <div class="mx-auto max-w-6xl" data-reveal>
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <SectionHead id="posts-title" title={d.blogPreview.title} subtitle={d.blogPreview.subtitle} />
+        <a href={localePath(lang, '/blog/')} class="mb-12 text-base font-semibold text-sage underline underline-offset-4">{d.common.allArticles}</a>
+      </div>
+      <BlogCards lang={lang} limit={3} />
+    </div>
+  </section>
+  <FinalCta lang={lang} />
+</Base>

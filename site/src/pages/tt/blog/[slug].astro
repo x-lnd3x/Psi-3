@@ -1,0 +1,12 @@
+---
+import { getCollection } from 'astro:content';
+import View from '../../../views/BlogPost.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+const { post } = Astro.props;
+---
+
+<View lang="tt" post={post} />

@@ -1,0 +1,77 @@
+---
+import SectionHead from './SectionHead.astro';
+import { type Lang } from '../lib/site';
+import { t } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+---
+
+<section id="steps" class="scroll-mt-24 bg-surface px-4 py-20 md:px-6 md:py-24" aria-labelledby="steps-title">
+  <div class="mx-auto max-w-3xl" data-reveal>
+    <SectionHead id="steps-title" title={d.steps.title} subtitle={d.steps.subtitle} />
+    <ol class="relative flex flex-col gap-10" data-steps>
+      <span class="absolute bottom-6 left-6 top-6 w-0.5 rounded-full bg-line" aria-hidden="true"></span>
+      <span class="steps-progress absolute bottom-6 left-6 top-6 w-0.5 origin-top rounded-full bg-sage" aria-hidden="true"></span>
+      {
+        d.steps.items.map((s, i) => (
+          <li class="step relative flex gap-6">
+            <span class="step-dot relative z-10 grid size-12 shrink-0 place-items-center rounded-2xl border border-line bg-surface text-lg font-bold text-muted">
+              {i + 1}
+            </span>
+            <div class="pt-2">
+              <h3 class="text-xl font-semibold text-ink">{s.title}</h3>
+              <p class="mt-2 text-base text-muted">{s.text}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .steps-progress {
+    transform: scaleY(var(--p, 0));
+    transition: transform 300ms var(--ease-calm);
+  }
+  .step-dot {
+    transition:
+      transform 500ms var(--ease-calm),
+      background-color 500ms var(--ease-calm),
+      color 500ms var(--ease-calm);
+  }
+  .step.is-on .step-dot {
+    background: var(--color-sage);
+    border-color: var(--color-sage);
+    color: #fff;
+    transform: scale(1.05);
+  }
+</style>
+
+<script>
+  // Линия прогресса растёт при прокрутке, шаги отмечаются по очереди
+  document.querySelectorAll<HTMLElement>('[data-steps]').forEach((list) => {
+    const steps = Array.from(list.querySelectorAll<HTMLElement>('.step'));
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      const r = list.getBoundingClientRect();
+      const line = window.innerHeight * 0.65;
+      const p = Math.min(1, Math.max(0, (line - r.top) / r.height));
+      list.style.setProperty('--p', p.toFixed(3));
+      steps.forEach((s) => s.classList.toggle('is-on', s.getBoundingClientRect().top < line));
+    };
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    update();
+  });
+</script>

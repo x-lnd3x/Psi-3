@@ -1,0 +1,64 @@
+---
+import { TelegramLogo, WhatsappLogo, Phone, ChatCircleDots } from '@phosphor-icons/react';
+import { site, type Lang } from '../lib/site';
+import { t } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  variant?: 'grid' | 'row';
+}
+const { lang, variant = 'grid' } = Astro.props;
+const d = t(lang);
+const c = site.contacts;
+const items = [
+  { id: 'telegram', label: 'Telegram', sub: c.telegramHandle, href: c.telegram, Icon: TelegramLogo, tone: 'bg-sky-tint text-sky' },
+  { id: 'max', label: 'MAX', sub: c.max ? d.nav.writeMe : d.common.soon, href: c.max, Icon: ChatCircleDots, tone: 'bg-sage-tint text-sage' },
+  { id: 'whatsapp', label: 'WhatsApp', sub: c.phone, href: c.whatsapp, Icon: WhatsappLogo, tone: 'bg-sage-tint text-sage' },
+  { id: 'phone', label: d.contacts.channels.phone, sub: c.phone, href: c.phoneHref, Icon: Phone, tone: 'bg-sky-tint text-sky' },
+];
+---
+
+<ul class:list={[variant === 'grid' ? 'grid gap-3 sm:grid-cols-2' : 'flex flex-wrap gap-2']}>
+  {
+    items.map(({ id, label, sub, href, Icon, tone }) => (
+      <li>
+        {href ? (
+          <a
+            href={href}
+            target={id === 'phone' ? undefined : '_blank'}
+            rel="noopener"
+            class:list={[
+              'glow-card group flex items-center gap-3 rounded-2xl border border-line bg-surface transition duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:border-sage/40 active:scale-[0.98]',
+              variant === 'grid' ? 'p-4' : 'px-3 py-2',
+            ]}
+          >
+            <span class:list={['grid size-10 shrink-0 place-items-center rounded-xl', tone]}>
+              <Icon size={22} weight="duotone" />
+            </span>
+            <span class="flex flex-col">
+              <span class="text-base font-semibold text-ink">{label}</span>
+              {variant === 'grid' && <span class="text-sm text-muted">{sub}</span>}
+            </span>
+          </a>
+        ) : (
+          <span
+            aria-disabled="true"
+            title={d.common.maxSoon}
+            class:list={[
+              'flex cursor-not-allowed items-center gap-3 rounded-2xl border border-dashed border-line bg-surface/60 opacity-70',
+              variant === 'grid' ? 'p-4' : 'px-3 py-2',
+            ]}
+          >
+            <span class:list={['grid size-10 shrink-0 place-items-center rounded-xl', tone]}>
+              <Icon size={22} weight="duotone" />
+            </span>
+            <span class="flex flex-col">
+              <span class="text-base font-semibold text-ink">{label}</span>
+              {variant === 'grid' && <span class="text-sm text-muted">{sub}</span>}
+            </span>
+          </span>
+        )}
+      </li>
+    ))
+  }
+</ul>

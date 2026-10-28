@@ -1,0 +1,31 @@
+---
+import Backdrop from './Backdrop.astro';
+
+interface Props {
+  title: string;
+  lead?: string;
+  eyebrow?: string;
+}
+const { title, lead, eyebrow } = Astro.props;
+---
+
+<section class="relative isolate overflow-hidden px-4 pb-12 pt-32 md:px-6 md:pb-16 md:pt-40">
+  <Backdrop rings={false} />
+  <div class="mx-auto max-w-6xl">
+    {eyebrow && <p class="page-in mb-4 text-sm font-semibold text-sage-deep">{eyebrow}</p>}
+    <h1 class="page-in text-hero max-w-[680px] text-5xl font-bold tracking-tight md:text-6xl" style="animation-delay:80ms">{title}</h1>
+    {lead && <p class="page-in mt-6 max-w-[680px] text-lg text-ink-soft md:text-xl" style="animation-delay:160ms">{lead}</p>}
+    <slot />
+  </div>
+</section>
+
+<style>
+  .page-in { animation: page-in 800ms var(--ease-calm) both; }
+  @keyframes page-in {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .page-in { animation: none; }
+  }
+</style>

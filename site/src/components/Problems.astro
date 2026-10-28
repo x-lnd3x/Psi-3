@@ -1,0 +1,40 @@
+---
+import { ArrowsClockwise, HeartBreak, Snowflake, Baby, Eye, ArrowsSplit, HouseLine, Flame } from '@phosphor-icons/react';
+import SectionHead from './SectionHead.astro';
+import { type Lang } from '../lib/site';
+import { t } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+const icons = { arrows: ArrowsClockwise, heartbreak: HeartBreak, snow: Snowflake, baby: Baby, eye: Eye, split: ArrowsSplit, house: HouseLine, flame: Flame };
+---
+
+<section id="problems" class="scroll-mt-24 px-4 py-20 md:px-6 md:py-24" aria-labelledby="problems-title">
+  <div class="mx-auto max-w-6xl" data-reveal>
+    <SectionHead id="problems-title" title={d.problems.title} subtitle={d.problems.subtitle} />
+    <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        d.problems.items.map((p, i) => {
+          const Icon = icons[p.icon as keyof typeof icons];
+          return (
+            <li class="glow-card group flex flex-col gap-4 rounded-3xl border border-line bg-surface p-6 transition duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:border-sage/30">
+              <span
+                class:list={[
+                  'grid size-12 place-items-center rounded-2xl transition-transform duration-500 group-hover:scale-110',
+                  i % 2 ? 'bg-sky-tint text-sky' : 'bg-sage-tint text-sage',
+                ]}
+              >
+                <Icon size={24} weight="duotone" />
+              </span>
+              <h3 class="text-lg font-semibold text-ink">{p.title}</h3>
+              <p class="text-base text-muted">{p.text}</p>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
+</section>

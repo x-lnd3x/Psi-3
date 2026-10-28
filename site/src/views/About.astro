@@ -1,0 +1,65 @@
+---
+import { PlayCircle, Quotes } from '@phosphor-icons/react';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Education from '../components/Education.astro';
+import Principles from '../components/Principles.astro';
+import FinalCta from '../components/FinalCta.astro';
+import FamilySystem from '../components/FamilySystem';
+import { type Lang } from '../lib/site';
+import { t } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+const a = d.about;
+---
+
+<Base lang={lang} title={d.meta.aboutTitle} description={d.meta.aboutDescription} path="/about/" current="about">
+  <PageHero eyebrow={d.common.role} title={a.title} lead={a.lead} />
+
+  <section id="story" class="scroll-mt-24 px-4 py-12 md:px-6 md:py-16" aria-labelledby="story-title">
+    <div class="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[1fr_1fr]" data-reveal>
+      <div>
+        <h2 id="story-title" class="mb-6 text-3xl font-bold tracking-tight text-ink md:text-4xl">{a.storyTitle}</h2>
+        <div class="flex flex-col gap-4">
+          {a.story.map((p) => <p class="text-lg text-ink-soft">{p}</p>)}
+        </div>
+      </div>
+      <div class="flex flex-col gap-4">
+        <figure class="relative grid aspect-video place-items-center overflow-hidden rounded-3xl border border-line bg-sky-tint">
+          <div class="flex flex-col items-center gap-4 px-6 text-center">
+            <span class="relative grid size-16 place-items-center rounded-full bg-surface text-sky shadow">
+              <span class="absolute inset-0 animate-ping rounded-full bg-surface/60 motion-reduce:animate-none"></span>
+              <PlayCircle size={36} weight="duotone" />
+            </span>
+            <figcaption>
+              <span class="block text-lg font-semibold text-ink">{a.videoTitle}</span>
+              <span class="mt-1 block text-sm text-ink-soft">{a.videoSoon}</span>
+            </figcaption>
+          </div>
+        </figure>
+        <blockquote class="flex gap-4 rounded-3xl border border-line bg-surface p-6">
+          <Quotes size={28} weight="fill" className="shrink-0 text-sage" />
+          <p class="text-base text-ink-soft">{d.tagline.text}</p>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <section id="method" class="scroll-mt-24 px-4 py-20 md:px-6 md:py-24" aria-labelledby="method-title">
+    <div class="mx-auto grid max-w-6xl items-center gap-12 rounded-3xl bg-surface p-8 md:p-12 lg:grid-cols-2" data-reveal>
+      <div>
+        <h2 id="method-title" class="mb-6 text-3xl font-bold tracking-tight text-ink md:text-4xl">{a.approachTitle}</h2>
+        <p class="text-lg text-ink-soft">{a.approachText}</p>
+      </div>
+      <FamilySystem client:visible labels={d.hero.systemNodes} hint={d.hero.systemHint} />
+    </div>
+  </section>
+
+  <Education lang={lang} full />
+  <Principles lang={lang} />
+  <FinalCta lang={lang} />
+</Base>

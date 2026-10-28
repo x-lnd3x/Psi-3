@@ -1,0 +1,162 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { getCollection } from 'astro:content';
+import MotionTabs from '../components/MotionTabs';
+import BookingWizard from '../components/BookingWizard';
+import { site, localePath, formatPrice, type Lang } from '../lib/site';
+import { t } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  path: string; // путь без языкового префикса, например '/about'
+  current?: 'home' | 'about' | 'services' | 'blog' | 'contacts' | null;
+  jsonLd?: object[];
+  noindex?: boolean;
+}
+
+const { lang, title, description, path, current = null, jsonLd = [], noindex = false } = Astro.props;
+const d = t(lang);
+const canonical = new URL(localePath(lang, path), site.domain).toString();
+const alternates = (['ru', 'tt'] as Lang[]).map((l) => ({
+  lang: l,
+  href: new URL(localePath(l, path), site.domain).toString(),
+}));
+const ogImage = new URL('/og.png', site.domain).toString();
+const latestPosts = (await getCollection('blog')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()).slice(0, 3);
+
+const baseLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name: d.meta.siteName,
+  url: site.domain,
+  telephone: site.contacts.phone,
+  areaServed: 'RU',
+  availableLanguage: 'ru',
+  priceRange: '0–4000 ₽',
+  founder: { '@type': 'Person', name: 'Екатерина Халикова', jobTitle: d.common.role },
+};
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="canonical" href={canonical} />
+    {alternates.map((a) => <link rel="alternate" hreflang={a.lang} href={a.href} />)}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#eef6f3" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content={lang === 'ru' ? 'ru_RU' : 'tt_RU'} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify([baseLd, ...jsonLd])} />
+  </head>
+  <body class="min-h-dvh antialiased">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-xl focus:bg-surface focus:px-4 focus:py-2 focus:font-semibold"
+      >{d.nav.skip}</a
+    >
+    <Header lang={lang} path={path} current={current} />
+    <main id="main" class="pb-28">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+    <MotionTabs
+      client:idle
+      current={current}
+      tabs={[
+        { id: 'home', label: d.nav.homeShort, title: d.nav.home, href: localePath(lang, '/') },
+        { id: 'about', label: d.nav.about, title: d.nav.about, href: localePath(lang, '/about/') },
+        { id: 'services', label: d.nav.servicesShort, title: d.nav.services, href: localePath(lang, '/services/') },
+        { id: 'blog', label: d.nav.blog, title: d.nav.blog, href: localePath(lang, '/blog/') },
+        { id: 'contacts', label: d.nav.contacts, title: d.nav.contacts, href: localePath(lang, '/contacts/') },
+      ]}
+      t={{
+        menu: d.nav.quickLinks,
+        open: d.common.open,
+        close: d.common.close,
+        book: d.hero.cta,
+        soon: d.common.soon,
+        writeMe: d.nav.writeMe,
+        allArticles: d.common.allArticles,
+        minRead: d.common.minRead,
+        introTitle: d.nav.introTitle,
+        introText: d.nav.introText,
+      }}
+      home={[
+        { href: localePath(lang, '/#problems'), label: d.problems.title },
+        { href: localePath(lang, '/#approach'), label: d.approach.title },
+        { href: localePath(lang, '/#steps'), label: d.steps.title },
+        { href: localePath(lang, '/#prices'), label: d.prices.title },
+        { href: localePath(lang, '/#faq'), label: d.faq.title },
+      ]}
+      about={{
+        name: 'Екатерина Халикова',
+        role: d.common.role,
+        stats: d.education.stats.slice(0, 3).map((s, i) => ({ value: s.value, label: d.nav.aboutStats[i] })),
+        links: [
+          { href: localePath(lang, '/about/#story'), label: d.about.storyTitle },
+          { href: localePath(lang, '/about/#method'), label: d.about.approachTitle },
+          { href: localePath(lang, '/about/#education'), label: d.education.title },
+        ],
+      }}
+      prices={d.prices.items.map((p) => ({
+        label: `${p.name}, ${p.duration}`,
+        value: formatPrice(site.prices[p.priceKey as keyof typeof site.prices], lang),
+        featured: !!p.featured,
+      }))}
+      posts={latestPosts.map((p) => ({
+        href: localePath(lang, `/blog/${p.id}/`),
+        title: p.data.title,
+        tag: p.data.tag,
+        minutes: p.data.readMinutes,
+      }))}
+      contacts={site.contacts}
+    />
+    <BookingWizard client:load lang={lang} mode="modal" d={d.booking} privacyHref={localePath(lang, '/privacy/')} telegram={site.contacts.telegram} hasMax={!!site.contacts.max} />
+
+    <script>
+      // Открытие записи по любой кнопке с data-book
+      document.addEventListener('click', (e) => {
+        const el = (e.target as HTMLElement).closest<HTMLElement>('[data-book]');
+        if (!el) return;
+        e.preventDefault();
+        window.dispatchEvent(new CustomEvent('open-booking', { detail: { who: el.dataset.book || undefined } }));
+      });
+
+      // Появление секций и счётчики
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            entry.target.classList.add('is-visible');
+            io.unobserve(entry.target);
+          }
+        },
+        { rootMargin: '0px 0px -10% 0px' }
+      );
+      document.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
+
+      // Пятно света в карточках
+      document.querySelectorAll<HTMLElement>('.glow-card').forEach((card) => {
+        card.addEventListener('pointermove', (e) => {
+          const r = card.getBoundingClientRect();
+          card.style.setProperty('--gx', `${e.clientX - r.left}px`);
+          card.style.setProperty('--gy', `${e.clientY - r.top}px`);
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,69 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import { ArrowLeft } from '@phosphor-icons/react';
+import Base from '../layouts/Base.astro';
+import BlogCards from '../components/BlogCards.astro';
+import { site, localePath, type Lang } from '../lib/site';
+import { t } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  post: CollectionEntry<'blog'>;
+}
+const { lang, post } = Astro.props;
+const d = t(lang);
+const { Content } = await render(post);
+const fmt = new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+const articleLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.date.toISOString(),
+  inLanguage: 'ru',
+  author: { '@type': 'Person', name: site.name },
+};
+---
+
+<Base
+  lang={lang}
+  title={`${post.data.title} | ${d.meta.siteName}`}
+  description={post.data.description}
+  path={`/blog/${post.id}/`}
+  current="blog"
+  jsonLd={[articleLd]}
+>
+  <article class="px-4 pb-12 pt-32 md:px-6 md:pt-40">
+    <div class="mx-auto max-w-3xl">
+      <a href={localePath(lang, '/blog/')} class="mb-8 inline-flex items-center gap-2 text-sm font-semibold text-muted hover:text-ink">
+        <ArrowLeft size={16} /> {d.blog.title}
+      </a>
+      <p class="mb-4 flex flex-wrap items-center gap-2 text-sm text-muted">
+        <span class="rounded-full bg-sage-tint px-3 py-1 text-xs font-semibold text-sage-deep">{post.data.tag}</span>
+        <time datetime={post.data.date.toISOString()}>{fmt.format(post.data.date)}</time> · {post.data.readMinutes} {d.common.minRead}
+      </p>
+      <h1 class="text-hero text-4xl font-bold tracking-tight md:text-5xl">{post.data.title}</h1>
+      <p class="mt-6 text-xl text-ink-soft">{post.data.description}</p>
+      {d.blog.onlyRu && <p lang="tt" class="mt-4 text-sm font-semibold text-sky">{d.blog.onlyRu}</p>}
+      <div class="prose-article mt-12" lang="ru">
+        <Content />
+      </div>
+      <aside class="mt-16 flex flex-col items-start gap-4 rounded-3xl border border-line bg-sage-tint p-8">
+        <h2 class="text-2xl font-bold text-ink">{d.blog.ctaTitle}</h2>
+        <p class="text-base text-ink-soft">{d.blog.ctaText}</p>
+        <button
+          type="button"
+          data-book
+          class="rounded-xl bg-sage px-3 py-2 text-base font-semibold text-white transition duration-300 hover:bg-sage-deep active:scale-[0.98]"
+        >
+          {d.hero.cta}
+        </button>
+      </aside>
+    </div>
+  </article>
+  <section class="px-4 py-12 md:px-6" aria-label={d.common.allArticles}>
+    <div class="mx-auto max-w-6xl">
+      <BlogCards lang={lang} limit={3} />
+    </div>
+  </section>
+</Base>

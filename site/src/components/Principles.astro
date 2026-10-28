@@ -1,0 +1,33 @@
+---
+import { LockKey, Scales, Compass, FirstAidKit } from '@phosphor-icons/react';
+import SectionHead from './SectionHead.astro';
+import { type Lang } from '../lib/site';
+import { t } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const p = t(lang).principles;
+const icons = [LockKey, Scales, Compass, FirstAidKit];
+---
+
+<section class="bg-sky-tint/70 px-4 py-20 md:px-6 md:py-24" aria-labelledby="principles-title">
+  <div class="mx-auto max-w-6xl" data-reveal>
+    <SectionHead id="principles-title" title={p.title} />
+    <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        p.items.map((it, i) => {
+          const Icon = icons[i];
+          return (
+            <li class="glow-card flex flex-col gap-4 rounded-3xl border border-line bg-surface p-6">
+              <Icon size={28} weight="duotone" className={i % 2 ? 'text-sky' : 'text-sage'} />
+              <h3 class="text-lg font-semibold text-ink">{it.title}</h3>
+              <p class="text-base text-muted">{it.text}</p>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
+</section>

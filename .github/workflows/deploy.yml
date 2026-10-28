@@ -1,0 +1,52 @@
+# Сборка сайта при каждом сохранении в ветку main и выкладка на Beget по FTP.
+# Пока в настройках репозитория не заданы секреты FTP_SERVER и FTP_DIR,
+# сайт только собирается (проверка, что ничего не сломано), но не выкладывается.
+name: Сборка и выкладка на Beget
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: true
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    env:
+      FTP_SERVER: ${{ secrets.FTP_SERVER }}
+      FTP_DIR: ${{ secrets.FTP_DIR }}
+    defaults:
+      run:
+        working-directory: site
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - name: Установка зависимостей
+        run: npm ci
+
+      - name: Сборка
+        run: npm run build
+
+      - name: Выкладка на Beget
+        if: env.FTP_SERVER != '' && env.FTP_DIR != ''
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./site/dist/
+          server-dir: ${{ secrets.FTP_DIR }}
+          # config.php с токеном бота живёт только на хостинге, его не трогаем
+          exclude: |
+            **/.git*
+            **/.git*/**
+            api/config.php

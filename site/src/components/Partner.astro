@@ -1,0 +1,33 @@
+---
+import { UserFocus, Handshake, ShareNetwork } from '@phosphor-icons/react';
+import { type Lang } from '../lib/site';
+import { t } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+const icons = [UserFocus, Handshake, ShareNetwork];
+---
+
+<section class="px-4 py-20 md:px-6 md:py-24" aria-labelledby="partner-title">
+  <div class="mx-auto max-w-6xl rounded-3xl bg-forest p-8 text-white md:p-12" data-reveal>
+    <h2 id="partner-title" class="max-w-2xl text-3xl font-bold tracking-tight md:text-5xl">{d.partner.title}</h2>
+    <p class="mt-4 max-w-2xl text-lg text-white/70">{d.partner.subtitle}</p>
+    <ol class="mt-12 grid gap-4 md:grid-cols-3">
+      {
+        d.partner.items.map((p, i) => {
+          const Icon = icons[i];
+          return (
+            <li class="flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/5 p-6 transition duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:bg-white/10">
+              <Icon size={28} weight="duotone" className="text-[#9fd1bb]" />
+              <h3 class="text-lg font-semibold">{p.title}</h3>
+              <p class="text-base text-white/70">{p.text}</p>
+            </li>
+          );
+        })
+      }
+    </ol>
+  </div>
+</section>

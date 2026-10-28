@@ -1,0 +1,55 @@
+---
+import { CheckCircle, VideoCamera } from '@phosphor-icons/react';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Problems from '../components/Problems.astro';
+import Approach from '../components/Approach.astro';
+import PriceCards from '../components/PriceCards.astro';
+import Partner from '../components/Partner.astro';
+import Faq from '../components/Faq.astro';
+import FinalCta from '../components/FinalCta.astro';
+import { type Lang } from '../lib/site';
+import { t } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+const s = d.services;
+---
+
+<Base lang={lang} title={d.meta.servicesTitle} description={d.meta.servicesDescription} path="/services/" current="services">
+  <PageHero eyebrow={d.common.online} title={s.title} lead={s.lead} />
+  <PriceCards lang={lang} showHead={false} />
+
+  <section class="px-4 py-20 md:px-6 md:py-24" aria-labelledby="who-title">
+    <div class="mx-auto grid max-w-6xl gap-4 lg:grid-cols-[1.4fr_1fr]" data-reveal>
+      <div class="rounded-3xl border border-line bg-surface p-8">
+        <h2 id="who-title" class="mb-6 text-3xl font-bold tracking-tight text-ink">{s.whoTitle}</h2>
+        <ul class="grid gap-3 sm:grid-cols-2">
+          {
+            s.who.map((w) => (
+              <li class="flex items-start gap-3 text-base text-ink-soft">
+                <CheckCircle size={22} weight="duotone" className="mt-0.5 shrink-0 text-sage" />
+                {w}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div class="flex flex-col gap-4 rounded-3xl bg-sky-tint p-8">
+        <VideoCamera size={32} weight="duotone" className="text-sky" />
+        <h2 class="text-2xl font-bold text-ink">{s.platformTitle}</h2>
+        <p class="text-base text-ink-soft">{s.platformText}</p>
+        <p class="text-sm font-semibold text-sage-deep">{d.common.langNote}</p>
+      </div>
+    </div>
+  </section>
+
+  <Approach lang={lang} />
+  <Problems lang={lang} />
+  <Partner lang={lang} />
+  <Faq lang={lang} />
+  <FinalCta lang={lang} />
+</Base>

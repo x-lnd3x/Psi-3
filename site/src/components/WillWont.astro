@@ -1,0 +1,50 @@
+---
+import { Check, X } from '@phosphor-icons/react';
+import SectionHead from './SectionHead.astro';
+import { type Lang } from '../lib/site';
+import { t } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const w = t(lang).willWont;
+---
+
+<section class="px-4 py-20 md:px-6 md:py-24" aria-labelledby="ww-title">
+  <div class="mx-auto max-w-6xl" data-reveal>
+    <SectionHead id="ww-title" title={w.title} />
+    <div class="grid gap-4 md:grid-cols-2">
+      <div class="rounded-3xl border border-line bg-sage-tint p-6 md:p-8">
+        <h3 class="mb-6 text-xl font-semibold text-sage-deep">{w.willTitle}</h3>
+        <ul class="flex flex-col gap-4">
+          {
+            w.will.map((x) => (
+              <li class="flex items-start gap-3 text-base text-ink">
+                <span class="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-sage text-white">
+                  <Check size={14} weight="bold" />
+                </span>
+                {x}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div class="rounded-3xl border border-line bg-surface p-6 md:p-8">
+        <h3 class="mb-6 text-xl font-semibold text-ink-soft">{w.wontTitle}</h3>
+        <ul class="flex flex-col gap-4">
+          {
+            w.wont.map((x) => (
+              <li class="flex items-start gap-3 text-base text-ink-soft">
+                <span class="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-mist text-muted">
+                  <X size={14} weight="bold" />
+                </span>
+                {x}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

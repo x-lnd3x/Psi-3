@@ -1,0 +1,21 @@
+---
+import ApproachTabs from './ApproachTabs';
+import { type Lang } from '../lib/site';
+import { t } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+---
+
+<section id="approach" class="scroll-mt-24 bg-sky-tint/70 px-4 py-20 md:px-6 md:py-24" aria-labelledby="approach-title">
+  <div class="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[1fr_1.2fr] lg:items-start" data-reveal>
+    <div class="flex flex-col gap-6 lg:sticky lg:top-32">
+      <h2 id="approach-title" class="text-3xl font-bold tracking-tight text-ink md:text-5xl">{d.approach.title}</h2>
+      <p class="text-lg text-ink-soft">{d.approach.text}</p>
+    </div>
+    <ApproachTabs client:visible tabs={d.approach.tabs} cta={d.nav.book} />
+  </div>
+</section>

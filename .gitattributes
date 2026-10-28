@@ -1,0 +1,5 @@
+# Одинаковые переносы строк на Windows и на облачных серверах
+* text=auto eol=lf
+*.png binary
+*.webp binary
+*.jpg binary

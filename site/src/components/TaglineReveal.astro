@@ -1,0 +1,48 @@
+---
+interface Props {
+  text: string;
+  accent: string[];
+}
+const { text, accent } = Astro.props;
+const words = text.split(' ');
+---
+
+<section class="px-4 py-24 md:px-6 md:py-32">
+  <p class="tagline mx-auto max-w-[680px] text-4xl font-bold tracking-tight md:text-6xl" data-tagline>
+    {words.map((w) => <span class:list={['tagline-word', accent.includes(w) && 'is-accent']}>{w} </span>)}
+  </p>
+</section>
+
+<script>
+  // Слова загораются по очереди, когда пересекают линию на 60% высоты экрана
+  document.querySelectorAll<HTMLElement>('[data-tagline]').forEach((block) => {
+    const words = Array.from(block.querySelectorAll<HTMLElement>('.tagline-word'));
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      words.forEach((w) => w.classList.add('is-on'));
+      return;
+    }
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      const line = window.innerHeight * 0.6;
+      let k = 0;
+      for (const w of words) {
+        if (w.classList.contains('is-on')) continue;
+        if (w.getBoundingClientRect().top < line) {
+          // слова одной строки загораются друг за другом, а не разом
+          w.style.transitionDelay = `${k++ * 90}ms`;
+          w.classList.add('is-on');
+        }
+      }
+      if (words.every((w) => w.classList.contains('is-on'))) window.removeEventListener('scroll', onScroll);
+    };
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    update();
+  });
+</script>

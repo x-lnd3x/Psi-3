@@ -1,0 +1,55 @@
+---
+import { Clock, Translate, ChatsCircle } from '@phosphor-icons/react';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import ContactButtons from '../components/ContactButtons.astro';
+import BookingWizard from '../components/BookingWizard';
+import { site, localePath, type Lang } from '../lib/site';
+import { t } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+const c = d.contacts;
+---
+
+<Base lang={lang} title={d.meta.contactsTitle} description={d.meta.contactsDescription} path="/contacts/" current="contacts">
+  <PageHero title={c.title} lead={c.lead} />
+  <section class="px-4 pb-20 md:px-6 md:pb-24">
+    <div class="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[1fr_1.1fr] lg:items-start">
+      <div class="flex flex-col gap-6" data-reveal>
+        <ContactButtons lang={lang} />
+        <ul class="flex flex-col gap-4 rounded-3xl border border-line bg-surface p-6">
+          <li class="flex items-start gap-3">
+            <Clock size={24} weight="duotone" className="shrink-0 text-sage" />
+            <span>
+              <span class="block text-base font-semibold text-ink">{c.hoursTitle}</span>
+              <span class="block text-sm text-muted">{c.hours}</span>
+            </span>
+          </li>
+          <li class="flex items-start gap-3">
+            <ChatsCircle size={24} weight="duotone" className="shrink-0 text-sky" />
+            <span class="text-base text-ink-soft">{c.replyTime}</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <Translate size={24} weight="duotone" className="shrink-0 text-sage" />
+            <span class="text-base text-ink-soft">{d.common.langNote}</span>
+          </li>
+        </ul>
+      </div>
+      <div data-reveal>
+        <BookingWizard
+          client:visible
+          lang={lang}
+          mode="inline"
+          d={d.booking}
+          privacyHref={localePath(lang, '/privacy/')}
+          telegram={site.contacts.telegram}
+          hasMax={!!site.contacts.max}
+        />
+      </div>
+    </div>
+  </section>
+</Base>
