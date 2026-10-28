@@ -35,6 +35,11 @@ jobs:
 
       - name: Сборка
         run: npm run build
+        env:
+          # Пока сайт на тестовом адресе, он закрыт от поисковиков.
+          # Когда подключите настоящий домен, создайте переменную репозитория ALLOW_INDEX = 1
+          # (Settings → Secrets and variables → Actions → Variables).
+          PUBLIC_NOINDEX: ${{ vars.ALLOW_INDEX == '1' && '0' || '1' }}
 
       - name: Выкладка на Beget
         if: env.FTP_SERVER != '' && env.FTP_DIR != ''

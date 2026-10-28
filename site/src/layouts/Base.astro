@@ -20,6 +20,8 @@ interface Props {
 
 const { lang, title, description, path, current = null, jsonLd = [], noindex = false } = Astro.props;
 const d = t(lang);
+// Тестовый адрес закрыт от поисковиков целиком, см. .github/workflows/deploy.yml
+const closedSite = import.meta.env.PUBLIC_NOINDEX === '1';
 const canonical = new URL(localePath(lang, path), site.domain).toString();
 const alternates = (['ru', 'tt'] as Lang[]).map((l) => ({
   lang: l,
@@ -48,7 +50,7 @@ const baseLd = {
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    {noindex && <meta name="robots" content="noindex" />}
+    {(noindex || closedSite) && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonical} />
     {alternates.map((a) => <link rel="alternate" hreflang={a.lang} href={a.href} />)}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
